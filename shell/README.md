@@ -83,6 +83,4 @@ Este repositório contém uma implementação de uma shell simples em C++ que de
 ## Notas
 
 - **Variáveis de Ambiente**: No momento, a shell não implementa variáveis de ambiente.
-- **Processos em Background**: O suporte para processos em segundo plano não está incluído na versão atual.
-- **Segurança**: Este é um exemplo básico e não inclui verificação completa de segurança.
 
