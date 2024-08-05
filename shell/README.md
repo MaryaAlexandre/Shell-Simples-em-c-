@@ -44,7 +44,7 @@ Este repositório contém uma implementação de uma shell simples em C++ que de
 
 ### Parte 3: Comandos Externos
 
-- A shell procura comandos em `/bin/` por padrão.
+- A shell procura comandos em `/shell/'
 - Se o comando existe e é executável, é executado em um processo filho.
 - Se o comando não for encontrado ou não for executável, uma mensagem de erro é exibida.
 
