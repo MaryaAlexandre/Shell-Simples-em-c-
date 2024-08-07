@@ -5,6 +5,7 @@
 #include <cstring>      // Inclui a biblioteca padrão do C++ para manipulação de strings C
 #include <sys/stat.h>   // Inclui a biblioteca para usar funções de manipulação de arquivos
 #include <fstream>      // Inclui a biblioteca para manipulação de arquivos em C++
+#include <cstdlib>      // Inclui a biblioteca padrão do C++ para usar a função system()
 
 #define HISTORY_SIZE 10 // Define uma constante para o tamanho máximo do histórico de comandos
 std::vector<std::string> history; // Declara um vetor de strings para armazenar o histórico de comandos
@@ -60,6 +61,20 @@ void cat_file(const char* file) {
 void change_owner(const char* file, const char* owner_group) {
     std::string command = "chown " + std::string(owner_group) + " " + std::string(file);
     system(command.c_str()); // Usa o comando system para executar chown
+}
+
+// Função para alterar permissões de arquivos
+void change_permissions(const char* file, mode_t mode) {
+    if (chmod(file, mode) == -1) { // Altera as permissões do arquivo
+        perror("chmod"); // Exibe uma mensagem de erro se chmod falhar
+    }
+}
+
+// Função para mover ou renomear arquivos
+void move_file(const char* source, const char* destination) {
+    if (rename(source, destination) == -1) { // Move ou renomeia o arquivo
+        perror("rename"); // Exibe uma mensagem de erro se rename falhar
+    }
 }
 
 // Função para processar o comando
@@ -144,6 +159,23 @@ void process_command(const std::string &command_line) {
             std::cerr << "chown: missing operand" << std::endl;
         } else {
             change_owner(args[2], args[1]); // Muda o proprietário e grupo do arquivo
+        }
+        delete[] command_cstr; // Libera a memória alocada
+        return;                        // Retorna
+    } else if (command == "chmod") { // Se o comando for "chmod"
+        if (args.size() < 3) { // Verifica se foram passadas as permissões e o arquivo
+            std::cerr << "chmod: missing operand" << std::endl;
+        } else {
+            mode_t mode = std::strtol(args[1], nullptr, 8); // Converte as permissões para o formato octal
+            change_permissions(args[2], mode); // Altera as permissões do arquivo
+        }
+        delete[] command_cstr; // Libera a memória alocada
+        return;                        // Retorna
+    } else if (command == "mv") { // Se o comando for "mv"
+        if (args.size() < 3) { // Verifica se foram passados o arquivo fonte e o destino
+            std::cerr << "mv: missing operand" << std::endl;
+        } else {
+            move_file(args[1], args[2]); // Move ou renomeia o arquivo
         }
         delete[] command_cstr; // Libera a memória alocada
         return;                        // Retorna
